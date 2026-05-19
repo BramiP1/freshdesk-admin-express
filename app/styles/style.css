@@ -21,8 +21,8 @@ body {
 }
 
 .panel {
-  margin: 12px;
-  padding: 14px;
+  margin: 6px;
+  padding: 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--panel);
@@ -30,7 +30,7 @@ body {
 
 .panel-header h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .match-badge {
@@ -57,11 +57,11 @@ body {
 }
 
 .state {
-  margin-top: 12px;
-  padding: 10px;
+  margin-top: 8px;
+  padding: 8px;
   border-radius: 8px;
   background: #f8fafc;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 #stateError {
@@ -75,54 +75,54 @@ body {
 }
 
 #stateResults {
-  margin-top: 12px;
+  margin-top: 8px;
 }
 
 label {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 #matchSelect {
   width: 100%;
-  margin-top: 6px;
-  padding: 8px;
-  border-radius: 8px;
+  margin-top: 4px;
+  padding: 5px 6px;
+  border-radius: 6px;
   border: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .detail-card {
-  margin-top: 12px;
-  padding: 12px;
+  margin-top: 8px;
+  padding: 8px 10px;
   border: 1px solid var(--border);
-  border-left: 4px solid var(--accent);
+  border-left: 3px solid var(--accent);
   border-radius: 8px;
   background: #fbfdff;
 }
 
 .detail-card h2 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
+  margin: 0 0 8px 0;
+  font-size: 14px;
 }
 
 .section-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--section-label);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-top: 0;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .info-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
-  margin-bottom: 8px;
+  font-size: 12px;
+  margin-bottom: 6px;
 }
 
 .info-table tr {
@@ -136,13 +136,13 @@ label {
 .info-label {
   font-weight: 600;
   color: var(--muted);
-  padding: 6px 0;
+  padding: 4px 0;
   width: 40%;
   vertical-align: top;
 }
 
 .info-value {
-  padding: 6px 0 6px 12px;
+  padding: 4px 0 4px 10px;
   color: var(--ink);
   word-break: break-word;
 }
