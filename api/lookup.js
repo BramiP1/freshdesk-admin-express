@@ -72,6 +72,7 @@ function normalizeContact(contact) {
 
   return {
     id,
+    record_type_id: contact.record_type_id || null,
     name: fullName || contact.display_name || "Unnamed contact",
     email: contact.email || "",
     mailboxId: cf.cf_mailbox_id || "",
