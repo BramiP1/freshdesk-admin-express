@@ -33,15 +33,17 @@ module.exports = async function handler(req, res) {
       }
     });
 
-    const body = await response.json();
+    const rawText = await response.text();
     console.log("Freshsales status:", response.status);
-    console.log("Freshsales body keys:", Object.keys(body));
-    console.log("Freshsales body:", JSON.stringify(body).slice(0, 500));
+    console.log("Freshsales raw:", rawText.slice(0, 500));
+
+    let body = {};
+    try { body = JSON.parse(rawText); } catch (e) { body = {}; }
 
     const contacts = Array.isArray(body.contacts) ? body.contacts : [];
 
     if (contacts.length === 0) {
-      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, bodyKeys: Object.keys(body) } });
+      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300) } });
     }
 
     const uniqueByMailbox = new Map();
