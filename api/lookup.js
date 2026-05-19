@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const url = `https://${domain}/crm/sales/api/search?include=contact&searchTerm=${encodeURIComponent(email)}&per_page=25`;
+    const url = `https://${domain}/crm/sales/api/lookup?q=${encodeURIComponent(email)}&f=email&entities=contact&include=sales_accounts`;
     const response = await fetch(url, {
       headers: {
         Authorization: `Token token=${apiKey}`,
