@@ -107,7 +107,7 @@ async function boot() {
 
   try {
     client = await app.initialized();
-    client.interface.trigger("resize", { height: "600px" });
+    client.interface.trigger("resize", { height: "600" });
     const requesterData = await client.data.get("requester");
     const requesterEmail = (requesterData?.requester?.email || "").trim().toLowerCase();
 
