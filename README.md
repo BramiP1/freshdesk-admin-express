@@ -1,46 +1,60 @@
-# Freshdesk Freshsales Matcher
+# Freshdesk Admin Express
 
-Freshdesk custom app (ticket sidebar) that reads requester email and fetches matching Freshsales mailbox records with full account details.
+Freshdesk custom app (ticket sidebar) that reads requester email and fetches matching Freshsales records with full account details.
 
 ## Current scope
 
-- Serverless architecture
 - Ticket sidebar placement
-- Read-only results, multi-match selector for agent choice
-- Displays plan, mailbox status, MC features, store address/phone, and more
-- No raw email in server logs
+- Reads requester email from ticket context via `client.data.get("requester")`
+- Queries Freshsales via a Vercel serverless API (replaces FDK serverless)
+- Filters results to specific record types only (Recipient, Admin User, Login Admin)
+- Deduplicates matches by mailbox ID
+- Agent selects from dropdown; app displays full contact details
+- Match/No Match badge in header
 
-## How it works
+## Architecture
 
-1. App reads requester email from Freshdesk ticket context
-2. Queries Freshsales `/crm/sales/api/lookup` endpoint by email
-3. Displays all matching contact records (multiple mailboxes per customer)
-4. Agent selects one; app displays full mailbox details including:
-   - Plan (cf_mailbox_plan)
-   - Plan dates (cf_plan_start_date, cf_plan_expiry_date)
-   - Mailbox status (cf_mailbox_account_status)
-   - Mail center details (from linked sales_accounts)
-   - MC features (cf_mc_features)
+The Freshdesk app (FDK) calls a **Vercel API** (`api/lookup.js`) which handles the Freshsales lookup server-side. Freshsales credentials live in Vercel environment variables — never exposed to the frontend.
+
+```
+Freshdesk sidebar (app.js)
+  → fetch → Vercel API (api/lookup.js)
+    → Freshsales CRM API (/crm/sales/api/lookup)
+```
 
 ## Project structure
 
-- manifest.json
-- config/iparams.json
-- config/requests.json
-- app/index.html
-- app/styles/style.css
-- app/scripts/app.js
-- server/server.js
-- app/assets/icon.svg
+```
+app/               Freshdesk sidebar app (HTML/CSS/JS)
+api/lookup.js      Vercel serverless function
+config/            FDK iparams and request templates
+server/server.js   FDK serverless stub (unused, kept for FDK validation)
+manifest.json      FDK app manifest
+vercel.json        Vercel config
+```
 
-## Required iparams
+## Vercel environment variables
 
-- `freshsales_domain` — Your Freshsales domain (e.g., ipostal1-org.myfreshworks.com)
-- `freshsales_api_key` — Freshsales API token (used only in serverless functions)
+| Variable | Description |
+|---|---|
+| `FRESHSALES_DOMAIN` | Freshsales domain e.g. `ipostal1-org.myfreshworks.com` |
+| `FRESHSALES_API_KEY` | Freshsales API token |
 
-## Freshsales custom fields
+## Freshsales API
 
-The app expects these fields on Freshsales contacts:
+- **Endpoint:** `GET /crm/sales/api/lookup?q={email}&f=email&entities=contact&include=sales_accounts`
+- **Response structure:** `body.contacts.contacts[]` (double-nested)
+- **Record type filtering:** Results are filtered to allowed `record_type_id` values (stored as strings)
+
+### Allowed record type IDs
+
+| Type | ID |
+|---|---|
+| Recipient | `18011960006` |
+| Admin User | `18011960334` |
+| Login Admin | `18011270036` |
+
+## Freshsales custom fields expected on contacts
 
 | Field | Description |
 |---|---|
@@ -58,14 +72,37 @@ Linked sales accounts should have:
 
 ## Run locally
 
-1. Install Freshworks CLI (FDK) globally: `npm install -g fdk`
-2. In this folder, run `fdk validate`
-3. Run `fdk run`
-4. Install app into your Freshdesk test account and configure iparams during installation
+Requires Node 18. Use fnm to switch:
+```
+fnm use 18
+fdk run
+```
+Then open a Freshdesk ticket and append `?dev=true` to the URL.
 
-## Notes
+## Known issues / notes
 
-- Multiple contact records can share the same email; the app shows all unique mailbox IDs
-- Deduplication is done by `cf_mailbox_id`
-- Server-side logging redacts the requester email for privacy
+- `client.interface.trigger("resize")` to expand sidebar height does not work in the `dev=true` test environment — expected to work once properly installed
+- FDK `client.request.invoke` (SMI) does not work reliably on platform 2.x; Vercel API is the workaround
+- The `vercelLookup` request template in `requests.json` shows a "not associated with product" warning — harmless, not used at runtime
+- Multiple contact records can share the same email across different record types; filtering by `record_type_id` handles this
 
+---
+
+## Session log
+
+### 2026-05-15
+- Scaffolded initial FDK app
+- Fixed `iparams.json` format (object format with `display_name`)
+- Fixed requester email source: `client.data.get("requester")` not `ticket`
+- Fixed `exports = {}` format for FDK serverless (platform 2.x requirement)
+- Disabled global apps in FDK config
+
+### 2026-05-19
+- Diagnosed FDK SMI (server method invocation) as unreliable on platform 2.x
+- Switched to Vercel serverless API architecture
+- Discovered correct Freshsales lookup endpoint: `/crm/sales/api/lookup?q=&f=email&entities=contact`
+- Fixed nested response parsing: `body.contacts.contacts[]`
+- Added record type filtering (Recipient / Admin User / Login Admin only)
+- Added Match/No Match badge to header
+- Compacted UI for better fit in narrow sidebar
+- Attempted sidebar height resize via `client.interface.trigger` — not functional in dev mode
