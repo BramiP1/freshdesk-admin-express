@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Freshsales Match</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <script defer src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
+    <script defer src="scripts/app.js"></script>
+  </head>
+  <body>
+    <main class="panel">
+      <header class="panel-header">
+        <h1>Freshsales Account Match</h1>
+        <p id="requesterEmail" class="muted">Email: detecting...</p>
+      </header>
+
+      <section id="stateLoading" class="state">Loading requester and Freshsales matches...</section>
+      <section id="stateError" class="state hidden" role="alert"></section>
+      <section id="stateEmpty" class="state hidden">No Freshsales matches found for this requester.</section>
+
+      <section id="stateResults" class="hidden">
+        <label for="matchSelect">Select a mailbox</label>
+        <select id="matchSelect"></select>
+
+        <article id="detailCard" class="detail-card hidden">
+          <h2 id="detailName"></h2>
+          
+          <div class="section-label">CUSTOMER INFO</div>
+          <table class="info-table">
+            <tr>
+              <td class="info-label">Mailbox ID</td>
+              <td class="info-value" id="detailMailboxId"></td>
+            </tr>
+            <tr>
+              <td class="info-label">Plan</td>
+              <td class="info-value" id="detailPlan"></td>
+            </tr>
+            <tr>
+              <td class="info-label">Plan Dates</td>
+              <td class="info-value" id="detailPlanDates"></td>
+            </tr>
+            <tr>
+              <td class="info-label">Status</td>
+              <td class="info-value" id="detailStatus"></td>
+            </tr>
+          </table>
+
+          <div class="section-label" style="margin-top: 12px;">MAIL CENTER</div>
+          <table class="info-table">
+            <tr>
+              <td class="info-label">Mail Center</td>
+              <td class="info-value" id="detailMcName"></td>
+            </tr>
+            <tr>
+              <td class="info-label">Phone</td>
+              <td class="info-value" id="detailMcPhone"></td>
+            </tr>
+            <tr>
+              <td class="info-label">Address</td>
+              <td class="info-value" id="detailMcAddress" style="white-space: pre-line;"></td>
+            </tr>
+            <tr id="mcFeaturesRow" class="hidden">
+              <td class="info-label">MC Features</td>
+              <td class="info-value" id="detailMcFeatures" style="white-space: pre-line;"></td>
+            </tr>
+          </table>
+
+          <a id="detailLink" href="#" target="_blank" rel="noopener noreferrer" class="detail-link">Open in Freshsales</a>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

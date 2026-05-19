@@ -1,0 +1,18 @@
+{
+  "platform-version": "2.3",
+  "whitelisted-domains": ["https://YOUR-VERCEL-URL.vercel.app"],
+  "product": {
+    "freshdesk": {
+      "location": {
+        "ticket_sidebar": {
+          "url": "index.html",
+          "icon": "assets/icon.svg"
+        }
+      }
+    }
+  },
+  "engines": {
+    "node": "18.20.4",
+    "fdk": "9.8.2"
+  }
+}

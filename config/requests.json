@@ -1,0 +1,24 @@
+{
+  "freshsalesLookup": {
+    "schema": {
+      "method": "GET",
+      "host": "<%= iparam.freshsales_domain %>",
+      "path": "/crm/sales/api/lookup?email={{context.email}}&include=sales_accounts",
+      "headers": {
+        "Authorization": "Token token=<%= iparam.freshsales_api_key %>",
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "freshsalesContactById": {
+    "schema": {
+      "method": "GET",
+      "host": "<%= iparam.freshsales_domain %>",
+      "path": "/crm/sales/api/contacts/{{context.contactId}}?include=sales_accounts",
+      "headers": {
+        "Authorization": "Token token=<%= iparam.freshsales_api_key %>",
+        "Content-Type": "application/json"
+      }
+    }
+  }
+}

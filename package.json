@@ -1,0 +1,13 @@
+{
+  "name": "freshdesk-freshsales-matcher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Freshdesk sidebar app to match requester email with Freshsales records",
+  "scripts": {
+    "test": "echo \"No tests yet\"",
+    "lint": "echo \"No linter configured yet\""
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

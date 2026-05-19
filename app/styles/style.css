@@ -1,0 +1,147 @@
+:root {
+  --bg: #f4f7fb;
+  --panel: #ffffff;
+  --ink: #0f172a;
+  --muted: #475569;
+  --accent: #0b7a75;
+  --error: #b42318;
+  --border: #dbe3ee;
+  --section-label: #6b7280;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(circle at 0% 0%, #e6f2ff 0%, var(--bg) 55%);
+  color: var(--ink);
+}
+
+.panel {
+  margin: 12px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+
+.panel-header h1 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+}
+
+.panel-header p {
+  margin: 0;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.state {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 14px;
+}
+
+#stateError {
+  color: var(--error);
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+}
+
+.hidden {
+  display: none;
+}
+
+#stateResults {
+  margin-top: 12px;
+}
+
+label {
+  display: block;
+  margin-top: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#matchSelect {
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.detail-card {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  background: #fbfdff;
+}
+
+.detail-card h2 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+}
+
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--section-label);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.info-table tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-table tr:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--muted);
+  padding: 6px 0;
+  width: 40%;
+  vertical-align: top;
+}
+
+.info-value {
+  padding: 6px 0 6px 12px;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.detail-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.detail-link:hover {
+  text-decoration: underline;
+}

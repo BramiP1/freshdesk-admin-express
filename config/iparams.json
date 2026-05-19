@@ -1,0 +1,15 @@
+{
+  "freshsales_domain": {
+    "display_name": "Freshsales domain",
+    "description": "Example: your-company.myfreshworks.com",
+    "type": "text",
+    "required": true
+  },
+  "freshsales_api_key": {
+    "display_name": "Freshsales API key",
+    "description": "Used only in serverless requests",
+    "type": "text",
+    "secure": true,
+    "required": true
+  }
+}
