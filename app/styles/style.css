@@ -29,12 +29,26 @@ body {
 }
 
 .panel-header h1 {
-  margin: 0 0 4px 0;
+  margin: 0;
   font-size: 18px;
 }
 
-.panel-header p {
-  margin: 0;
+.match-badge {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 12px;
+  vertical-align: middle;
+}
+
+.match-badge.match {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.match-badge.no-match {
+  color: #991b1b;
+  background: #fee2e2;
 }
 
 .muted {

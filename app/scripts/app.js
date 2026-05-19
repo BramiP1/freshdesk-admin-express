@@ -2,7 +2,7 @@ let client;
 let matches = [];
 
 const el = {
-  requesterEmail: document.getElementById("requesterEmail"),
+  matchBadge: document.getElementById("matchBadge"),
   stateLoading: document.getElementById("stateLoading"),
   stateError: document.getElementById("stateError"),
   stateEmpty: document.getElementById("stateEmpty"),
@@ -91,18 +91,12 @@ function renderMatches() {
   renderDetails(matches[0]);
 }
 
-const LOOKUP_URL = "https://freshdesk-admin-express.vercel.app/api/lookup";
-
 async function lookupMatchesByEmail(email) {
-  const result = await client.request.get(`${LOOKUP_URL}?email=${encodeURIComponent(email)}`, {
-    headers: { "Content-Type": "application/json" }
-  });
-
-  const response = JSON.parse(result.response);
+  const res = await fetch(`https://freshdesk-admin-express.vercel.app/api/lookup?email=${encodeURIComponent(email)}`);
+  const response = await res.json();
 
   if (!response || response.status !== "ok") {
-    const message = response?.message || "Unable to fetch Freshsales matches.";
-    throw new Error(message);
+    throw new Error(response?.message || "Unable to fetch Freshsales matches.");
   }
 
   return response.matches || [];
@@ -116,11 +110,9 @@ async function boot() {
     const requesterData = await client.data.get("requester");
     const requesterEmail = (requesterData?.requester?.email || "").trim().toLowerCase();
 
-    el.requesterEmail.textContent = requesterEmail
-      ? `Email: ${requesterEmail}`
-      : "Email: not available on this ticket";
-
     if (!requesterEmail) {
+      el.matchBadge.textContent = "No Match";
+      el.matchBadge.className = "match-badge no-match";
       el.stateError.textContent = "Requester email is missing. Cannot run Freshsales lookup.";
       setState("error");
       return;
@@ -129,10 +121,14 @@ async function boot() {
     matches = await lookupMatchesByEmail(requesterEmail);
 
     if (matches.length === 0) {
+      el.matchBadge.textContent = "No Match";
+      el.matchBadge.className = "match-badge no-match";
       setState("empty");
       return;
     }
 
+    el.matchBadge.textContent = "Match";
+    el.matchBadge.className = "match-badge match";
     renderMatches();
     setState("results");
   } catch (error) {
