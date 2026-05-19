@@ -91,7 +91,7 @@ function renderMatches() {
   renderDetails(matches[0]);
 }
 
-const LOOKUP_URL = "https://YOUR-VERCEL-URL.vercel.app/api/lookup";
+const LOOKUP_URL = "https://freshdesk-admin-express.vercel.app/api/lookup";
 
 async function lookupMatchesByEmail(email) {
   const result = await client.request.get(`${LOOKUP_URL}?email=${encodeURIComponent(email)}`, {

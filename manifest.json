@@ -1,6 +1,6 @@
 {
   "platform-version": "2.3",
-  "whitelisted-domains": ["https://YOUR-VERCEL-URL.vercel.app"],
+  "whitelisted-domains": ["https://freshdesk-admin-express.vercel.app"],
   "product": {
     "freshdesk": {
       "location": {
