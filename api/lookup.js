@@ -38,6 +38,7 @@ module.exports = async function handler(req, res) {
 
     const allowedRecordTypes = new Set(["18011960006", "18011960334", "18011270036"]);
     const allContacts = Array.isArray(body.contacts && body.contacts.contacts) ? body.contacts.contacts : [];
+    console.log("record_type_ids:", allContacts.map(c => ({ id: c.id, record_type_id: c.record_type_id, type: typeof c.record_type_id })));
     const contacts = allContacts.filter(c => allowedRecordTypes.has(String(c.record_type_id)));
 
     if (contacts.length === 0) {
@@ -74,6 +75,7 @@ function normalizeContact(contact) {
 
   return {
     id,
+    record_type_id: contact.record_type_id,
     name: fullName || contact.display_name || "Unnamed contact",
     email: contact.email || "",
     mailboxId: cf.cf_mailbox_id || "",
