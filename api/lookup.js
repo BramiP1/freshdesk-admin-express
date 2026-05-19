@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const url = `https://${domain}/crm/sales/api/contacts?search=${encodeURIComponent(email)}&include=sales_accounts&per_page=25`;
+    const url = `https://${domain}/crm/sales/api/search?include=contact&q=${encodeURIComponent(email)}&per_page=25`;
     const response = await fetch(url, {
       headers: {
         Authorization: `Token token=${apiKey}`,
@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
     const contacts = Array.isArray(body.contacts) ? body.contacts : [];
 
     if (contacts.length === 0) {
-      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300) } });
+      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300), emailReceived: email } });
     }
 
     const uniqueByMailbox = new Map();
