@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
     const contacts = Array.isArray(body.contact) ? body.contact : (Array.isArray(body.contacts) ? body.contacts : []);
 
     if (contacts.length === 0) {
-      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300) } });
+      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300), url } });
     }
 
     const uniqueByMailbox = new Map();
