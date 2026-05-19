@@ -25,12 +25,18 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const url = `https://${domain}/crm/sales/api/search?include=contact&q=${encodeURIComponent(email)}`;
+    const url = `https://${domain}/crm/sales/api/contacts/filter?include=sales_accounts`;
     const response = await fetch(url, {
+      method: "POST",
       headers: {
         Authorization: `Token token=${apiKey}`,
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({
+        filter_rule: [{ attribute: "contact_email.email", operator: "is_in", value: [email] }],
+        page: 1,
+        per_page: 25
+      })
     });
 
     const rawText = await response.text();
@@ -40,10 +46,10 @@ module.exports = async function handler(req, res) {
     let body = {};
     try { body = JSON.parse(rawText); } catch (e) { body = {}; }
 
-    const contacts = Array.isArray(body.contact) ? body.contact : (Array.isArray(body.contacts) ? body.contacts : []);
+    const contacts = Array.isArray(body.contacts) ? body.contacts : [];
 
     if (contacts.length === 0) {
-      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300), url } });
+      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300) } });
     }
 
     const uniqueByMailbox = new Map();
