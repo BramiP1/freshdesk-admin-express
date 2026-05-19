@@ -1,12 +1,14 @@
 {
   "platform-version": "2.3",
-  "whitelisted-domains": ["https://freshdesk-admin-express.vercel.app"],
   "product": {
     "freshdesk": {
       "location": {
         "ticket_sidebar": {
           "url": "index.html",
-          "icon": "assets/icon.svg"
+          "icon": "assets/icon.svg",
+          "dimensions": {
+            "height": "600px"
+          }
         }
       }
     }
