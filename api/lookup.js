@@ -34,10 +34,14 @@ module.exports = async function handler(req, res) {
     });
 
     const body = await response.json();
+    console.log("Freshsales status:", response.status);
+    console.log("Freshsales body keys:", Object.keys(body));
+    console.log("Freshsales body:", JSON.stringify(body).slice(0, 500));
+
     const contacts = Array.isArray(body.contacts) ? body.contacts : [];
 
     if (contacts.length === 0) {
-      return res.json({ status: "ok", matches: [] });
+      return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, bodyKeys: Object.keys(body) } });
     }
 
     const uniqueByMailbox = new Map();
