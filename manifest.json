@@ -5,10 +5,7 @@
       "location": {
         "ticket_sidebar": {
           "url": "index.html",
-          "icon": "assets/icon.svg",
-          "dimensions": {
-            "height": "600px"
-          }
+          "icon": "assets/icon.svg"
         }
       }
     }
