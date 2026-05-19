@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const url = `https://${domain}/crm/sales/api/lookup?email=${encodeURIComponent(email)}&include=sales_accounts`;
+    const url = `https://${domain}/crm/sales/api/search?include=contact&q=${encodeURIComponent(email)}`;
     const response = await fetch(url, {
       headers: {
         Authorization: `Token token=${apiKey}`,
@@ -40,7 +40,7 @@ module.exports = async function handler(req, res) {
     let body = {};
     try { body = JSON.parse(rawText); } catch (e) { body = {}; }
 
-    const contacts = Array.isArray(body.contacts) ? body.contacts : [];
+    const contacts = Array.isArray(body.contact) ? body.contact : (Array.isArray(body.contacts) ? body.contacts : []);
 
     if (contacts.length === 0) {
       return res.json({ status: "ok", matches: [], _debug: { httpStatus: response.status, raw: rawText.slice(0, 300) } });
