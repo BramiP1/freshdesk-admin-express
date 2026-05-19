@@ -25,18 +25,12 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const url = `https://${domain}/crm/sales/api/contacts/filter?include=sales_accounts`;
+    const url = `https://${domain}/crm/sales/api/contacts?search=${encodeURIComponent(email)}&include=sales_accounts&per_page=25`;
     const response = await fetch(url, {
-      method: "POST",
       headers: {
         Authorization: `Token token=${apiKey}`,
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        filter_rule: [{ attribute: "contact_email.email", operator: "is_in", value: [email] }],
-        page: 1,
-        per_page: 25
-      })
+      }
     });
 
     const rawText = await response.text();
