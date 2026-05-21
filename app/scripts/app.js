@@ -12,12 +12,11 @@ const el = {
   detailName: document.getElementById("detailName"),
   detailMailboxId: document.getElementById("detailMailboxId"),
   detailPlan: document.getElementById("detailPlan"),
-  detailPlanDates: document.getElementById("detailPlanDates"),
+  detailPlanStartDate: document.getElementById("detailPlanStartDate"),
   detailStatus: document.getElementById("detailStatus"),
   detailMcName: document.getElementById("detailMcName"),
   detailMcPhone: document.getElementById("detailMcPhone"),
   detailMcAddress: document.getElementById("detailMcAddress"),
-  detailMcFeatures: document.getElementById("detailMcFeatures"),
   detailLink: document.getElementById("detailLink")
 };
 
@@ -47,28 +46,11 @@ function renderDetails(record) {
   el.detailName.textContent = record.name || "Unnamed contact";
   el.detailMailboxId.textContent = record.mailboxId || "N/A";
   el.detailPlan.textContent = record.plan || "N/A";
-
-  let planDates = [];
-  if (record.planStartDate) planDates.push(`Start: ${record.planStartDate}`);
-  if (record.planExpiryDate) planDates.push(`Expires: ${record.planExpiryDate}`);
-  el.detailPlanDates.textContent = planDates.length > 0 ? planDates.join(" | ") : "N/A";
-
+  el.detailPlanStartDate.textContent = record.planStartDate || "N/A";
   el.detailStatus.textContent = record.status || "N/A";
-  el.detailMcName.textContent = record.name || "N/A";
+  el.detailMcName.textContent = record.mcName || "N/A";
   el.detailMcPhone.textContent = record.storePhone || "N/A";
   el.detailMcAddress.textContent = record.storeAddress || "N/A";
-
-  if (record.mcFeatures) {
-    el.detailMcFeatures.textContent = record.mcFeatures
-      .split(";")
-      .map((f) => f.trim())
-      .filter(Boolean)
-      .join("\n");
-    document.getElementById("mcFeaturesRow").classList.remove("hidden");
-  } else {
-    document.getElementById("mcFeaturesRow").classList.add("hidden");
-  }
-
   el.detailLink.href = record.url || "#";
   el.detailCard.classList.remove("hidden");
 }
