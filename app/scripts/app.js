@@ -132,9 +132,23 @@ async function boot() {
       });
     });
 
-    client.events.subscribe("ticket.propertiesUpdated", run);
-
     await run();
+
+    let currentTicketId = null;
+    const ticketData = await client.data.get("ticket");
+    currentTicketId = ticketData?.ticket?.id;
+
+    setInterval(async () => {
+      try {
+        const data = await client.data.get("ticket");
+        const id = data?.ticket?.id;
+        if (id && id !== currentTicketId) {
+          currentTicketId = id;
+          run();
+        }
+      } catch (e) {}
+    }, 800);
+
   } catch (error) {
     el.stateError.textContent = error.message || "Unexpected app error";
     setState("error");
