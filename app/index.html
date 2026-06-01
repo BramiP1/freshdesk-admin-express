@@ -11,7 +11,7 @@
   <body>
     <main class="panel">
       <header class="panel-header">
-        <h1>Freshsales Account <span id="matchBadge" class="match-badge">...</span></h1>
+        <span id="matchBadge" class="match-badge">...</span>
       </header>
 
       <section id="stateLoading" class="state">Loading...</section>
@@ -22,47 +22,26 @@
         <label for="matchSelect">Select a mailbox</label>
         <select id="matchSelect"></select>
 
-        <article id="detailCard" class="detail-card hidden">
-          <h2 id="detailName"></h2>
-          
-          <div class="section-label">CUSTOMER INFO</div>
-          <table class="info-table">
-            <tr>
-              <td class="info-label">Mailbox ID</td>
-              <td class="info-value" id="detailMailboxId"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Plan</td>
-              <td class="info-value" id="detailPlan"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Plan Start</td>
-              <td class="info-value" id="detailPlanStartDate"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Status</td>
-              <td class="info-value" id="detailStatus"></td>
-            </tr>
-          </table>
+        <table class="info-table summary-table">
+          <tr>
+            <td class="info-label">Mailbox ID</td>
+            <td class="info-value" id="summaryMailboxId"></td>
+          </tr>
+          <tr>
+            <td class="info-label">1583 Status</td>
+            <td class="info-value" id="summaryStatus"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Open Tickets</td>
+            <td class="info-value" id="summaryOpenTickets">—</td>
+          </tr>
+          <tr>
+            <td class="info-label">Lifetime Tickets</td>
+            <td class="info-value" id="summaryLifetimeTickets">—</td>
+          </tr>
+        </table>
 
-          <div class="section-label" style="margin-top: 12px;">MAIL CENTER</div>
-          <table class="info-table">
-            <tr>
-              <td class="info-label">Mail Center</td>
-              <td class="info-value" id="detailMcName"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Phone</td>
-              <td class="info-value" id="detailMcPhone"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Address</td>
-              <td class="info-value" id="detailMcAddress" style="white-space: pre-line;"></td>
-            </tr>
-          </table>
-
-          <a id="detailLink" href="#" target="_blank" rel="noopener noreferrer" class="detail-link">Open in Freshsales</a>
-        </article>
+        <button id="viewDetailsBtn" class="details-btn">View Full Details</button>
       </section>
     </main>
   </body>

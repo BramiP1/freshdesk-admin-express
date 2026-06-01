@@ -147,15 +147,140 @@ label {
   word-break: break-word;
 }
 
+.status-approved {
+  color: #166534;
+  background: #dcfce7;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-pending {
+  color: #854d0e;
+  background: #fef9c3;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-nodocs {
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+.details-header {
+  margin-bottom: 8px;
+}
+
+.detail-name-header {
+  margin: 0;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.details-btn {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 7px 0;
+  background: #005EB8;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.details-btn:hover {
+  opacity: 0.9;
+}
+
+.summary-table {
+  margin-top: 8px;
+}
+
+.modal-close-btn {
+  float: right;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.modal-close-btn:hover {
+  background: #f1f5f9;
+}
+
+.modal-body {
+  padding: 16px 20px;
+}
+
+.modal-name {
+  margin: 0 0 2px 0;
+  font-size: 18px;
+  color: var(--ink);
+}
+
+.modal-email {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.modal-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--section-label);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 6px 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
 .detail-link {
   display: inline-block;
   margin-top: 10px;
-  color: var(--accent);
+  color: #005EB8;
   text-decoration: none;
   font-weight: 600;
   font-size: 13px;
+  background: #005EB8;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
 }
 
 .detail-link:hover {
-  text-decoration: underline;
+  opacity: 0.9;
+  text-decoration: none;
 }

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer Details</title>
+    <link rel="stylesheet" href="styles/style.css" />
+    <script defer src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
+    <script defer src="scripts/modal.js"></script>
+  </head>
+  <body>
+    <main class="modal-body">
+      <button id="modalCloseBtn" class="modal-close-btn">✕ Close</button>
+      <div id="modalLoading" class="state">Loading...</div>
+      <div id="modalError" class="state hidden" role="alert"></div>
+
+      <div id="modalContent" class="hidden">
+        <select id="modalMatchSelect" class="hidden" style="width:100%;margin-bottom:12px;padding:5px 6px;border-radius:6px;border:1px solid var(--border);font-size:13px;"></select>
+        <h2 id="modalName" class="modal-name"></h2>
+        <p id="modalEmail" class="modal-email"></p>
+
+        <div class="modal-section-label">CUSTOMER INFO</div>
+        <table class="info-table">
+          <tr>
+            <td class="info-label">Mailbox ID</td>
+            <td class="info-value" id="modalMailboxId"></td>
+          </tr>
+          <tr>
+            <td class="info-label">POB #</td>
+            <td class="info-value" id="modalMailboxNumber"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Plan</td>
+            <td class="info-value" id="modalPlan"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Plan Start</td>
+            <td class="info-value" id="modalPlanStartDate"></td>
+          </tr>
+          <tr>
+            <td class="info-label">1583 Status</td>
+            <td class="info-value" id="modalStatus"></td>
+          </tr>
+        </table>
+
+        <div class="modal-section-label">MAIL CENTER</div>
+        <table class="info-table">
+          <tr>
+            <td class="info-label">Name</td>
+            <td class="info-value" id="modalMcName"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Phone</td>
+            <td class="info-value" id="modalMcPhone"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Address</td>
+            <td class="info-value" id="modalMcAddress"></td>
+          </tr>
+        </table>
+
+        <div class="modal-section-label">FRESHDESK</div>
+        <table class="info-table">
+          <tr>
+            <td class="info-label">Open Tickets</td>
+            <td class="info-value" id="modalOpenTickets"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Lifetime Tickets</td>
+            <td class="info-value" id="modalLifetimeTickets"></td>
+          </tr>
+        </table>
+
+        <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="detail-link">Recipient Lookup →</a>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,22 +1,32 @@
 {
-  "freshsalesLookup": {
+  "vercelLookup": {
     "schema": {
       "method": "GET",
-      "host": "<%= iparam.freshsales_domain %>",
-      "path": "/crm/sales/api/lookup?email={{context.email}}&include=sales_accounts",
+      "host": "freshdesk-admin-express.vercel.app",
+      "path": "/api/lookup?email={{context.email}}",
       "headers": {
-        "Authorization": "Token token=<%= iparam.freshsales_api_key %>",
         "Content-Type": "application/json"
       }
     }
   },
-  "freshsalesContactById": {
+  "freshdeskOpenTickets": {
     "schema": {
       "method": "GET",
-      "host": "<%= iparam.freshsales_domain %>",
-      "path": "/crm/sales/api/contacts/{{context.contactId}}?include=sales_accounts",
+      "host": "<%= iparam.freshdesk_domain %>",
+      "path": "/api/v2/tickets?requester_id={{context.contactId}}&status=2&per_page=100",
       "headers": {
-        "Authorization": "Token token=<%= iparam.freshsales_api_key %>",
+        "Authorization": "Basic <%= encode(iparam.freshdesk_api_key + ':X') %>",
+        "Content-Type": "application/json"
+      }
+    }
+  },
+  "freshdeskContact": {
+    "schema": {
+      "method": "GET",
+      "host": "<%= iparam.freshdesk_domain %>",
+      "path": "/api/v2/contacts/{{context.contactId}}",
+      "headers": {
+        "Authorization": "Basic <%= encode(iparam.freshdesk_api_key + ':X') %>",
         "Content-Type": "application/json"
       }
     }
