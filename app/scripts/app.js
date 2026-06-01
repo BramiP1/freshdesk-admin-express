@@ -45,14 +45,14 @@ function renderSummary(record) {
 
 function renderMatches() {
   el.matchSelect.innerHTML = "";
+  el.matchSelect.onchange = null;
   matches.forEach((record, index) => {
     const option = document.createElement("option");
     option.value = String(index);
     option.textContent = `${record.name || "Unnamed"} - POB: ${record.mailboxNumber || "N/A"}`;
     el.matchSelect.appendChild(option);
   });
-
-  el.matchSelect.addEventListener("change", (e) => renderSummary(matches[Number(e.target.value)]));
+  el.matchSelect.onchange = (e) => renderSummary(matches[Number(e.target.value)]);
   renderSummary(matches[0]);
 }
 
@@ -76,10 +76,14 @@ async function lookupMatchesByEmail(email) {
   return response.matches || [];
 }
 
-async function boot() {
+async function run() {
   setState("loading");
+  el.matchBadge.textContent = "...";
+  el.matchBadge.className = "match-badge";
+  el.summaryOpenTickets.textContent = "—";
+  el.summaryLifetimeTickets.textContent = "—";
+
   try {
-    client = await app.initialized();
     const requesterData = await client.data.get("requester");
     const requesterEmail = (requesterData?.requester?.email || "").trim().toLowerCase();
 
@@ -111,6 +115,16 @@ async function boot() {
     renderMatches();
     setState("results");
 
+  } catch (error) {
+    el.stateError.textContent = error.message || "Unexpected app error";
+    setState("error");
+  }
+}
+
+async function boot() {
+  try {
+    client = await app.initialized();
+
     el.viewDetailsBtn.addEventListener("click", () => {
       client.interface.trigger("showModal", {
         title: "Customer Details",
@@ -118,6 +132,9 @@ async function boot() {
       });
     });
 
+    client.events.subscribe("ticket.propertiesUpdated", run);
+
+    await run();
   } catch (error) {
     el.stateError.textContent = error.message || "Unexpected app error";
     setState("error");
