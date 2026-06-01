@@ -21,7 +21,7 @@ module.exports = async function handler(req, res) {
     const contacts = await contactRes.json();
 
     if (!Array.isArray(contacts) || contacts.length === 0) {
-      return res.json({ status: "ok", open: 0, lifetime: 0 });
+      return res.json({ status: "ok", open: 0, lifetime: 0, _debug: { contactsRaw: contacts } });
     }
 
     const contact = contacts[0];
