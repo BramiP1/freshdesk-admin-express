@@ -17,25 +17,19 @@ module.exports = async function handler(req, res) {
   const headers = { Authorization: auth, "Content-Type": "application/json" };
 
   try {
-    const contactRes = await fetch(`https://${domain}/api/v2/contacts?email=${encodeURIComponent(email)}`, { headers });
-    const contacts = await contactRes.json();
-
-    if (!Array.isArray(contacts) || contacts.length === 0) {
-      return res.json({ status: "ok", open: 0, lifetime: 0, _debug: { contactsRaw: contacts } });
-    }
-
-    const contact = contacts[0];
-    const openRes = await fetch(
-      `https://${domain}/api/v2/tickets?requester_id=${contact.id}&status=2&per_page=100`,
+    const ticketsRes = await fetch(
+      `https://${domain}/api/v2/tickets?email=${encodeURIComponent(email)}&per_page=100`,
       { headers }
     );
-    const openTickets = await openRes.json();
+    const tickets = await ticketsRes.json();
 
-    return res.json({
-      status: "ok",
-      open: Array.isArray(openTickets) ? openTickets.length : 0,
-      lifetime: contact.tickets_count || 0
-    });
+    if (!Array.isArray(tickets)) {
+      return res.json({ status: "ok", open: 0, lifetime: 0 });
+    }
+
+    const open = tickets.filter(t => t.status === 2 || t.status === 3).length;
+
+    return res.json({ status: "ok", open, lifetime: tickets.length });
   } catch (error) {
     console.error("Freshdesk tickets lookup failed:", error.message);
     return res.status(500).json({ status: "error", message: "Freshdesk lookup failed" });
