@@ -42,11 +42,15 @@ function renderSummary(record) {
   const sc = getStatusClass(statusText);
   el.summaryStatus.className = "info-value" + (sc ? " " + sc : "");
 
-  const acctStatus = record.accountStatus || "Match";
-  el.matchBadge.textContent = acctStatus;
-  const s = acctStatus.toLowerCase();
-  const badgeClass = s.includes("inactive") ? "no-match" : "match";
-  el.matchBadge.className = "match-badge " + badgeClass;
+  const acctStatus = record.accountStatus || "";
+  if (acctStatus) {
+    el.matchBadge.textContent = acctStatus;
+    const badgeClass = acctStatus.toLowerCase().includes("inactive") ? "no-match" : "match";
+    el.matchBadge.className = "match-badge " + badgeClass;
+  } else {
+    el.matchBadge.textContent = "";
+    el.matchBadge.className = "match-badge";
+  }
 }
 
 function renderMatches() {
