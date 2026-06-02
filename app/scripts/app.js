@@ -44,7 +44,9 @@ function renderSummary(record) {
 
   const acctStatus = record.accountStatus || "Match";
   el.matchBadge.textContent = acctStatus;
-  el.matchBadge.className = "match-badge match";
+  const s = acctStatus.toLowerCase();
+  const badgeClass = s.includes("inactive") ? "no-match" : "match";
+  el.matchBadge.className = "match-badge " + badgeClass;
 }
 
 function renderMatches() {
