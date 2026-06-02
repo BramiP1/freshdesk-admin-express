@@ -113,6 +113,7 @@ function normalizeContact(contact, accountMap) {
     plan: cf.cf_mailbox_plan || "",
     planStartDate: (cf.cf_plan_start_date || "").split("T")[0],
     status: cf.cf_1583_doc_status || "",
+    accountStatus: cf.cf_mailbox_account_status || "",
     mcName: (account && account.name) || "",
     storeAddress,
     storePhone: (account && account.phone) || "",

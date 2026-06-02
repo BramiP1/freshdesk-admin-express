@@ -41,6 +41,10 @@ function renderSummary(record) {
   el.summaryStatus.textContent = statusText;
   const sc = getStatusClass(statusText);
   el.summaryStatus.className = "info-value" + (sc ? " " + sc : "");
+
+  const acctStatus = record.accountStatus || "Match";
+  el.matchBadge.textContent = acctStatus;
+  el.matchBadge.className = "match-badge match";
 }
 
 function renderMatches() {
@@ -110,8 +114,6 @@ async function run() {
       return;
     }
 
-    el.matchBadge.textContent = "Match";
-    el.matchBadge.className = "match-badge match";
     renderMatches();
     setState("results");
 
