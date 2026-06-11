@@ -1,52 +1,67 @@
 # Freshdesk Admin Express
 
-Freshdesk custom app (ticket sidebar) that reads requester email and fetches matching Freshsales records with full account details.
+Freshdesk custom app (ticket sidebar) that reads the requester's email, looks them up in Freshsales, and displays their mailbox and mail center details.
 
-## Current scope
+## What it does
 
-- Ticket sidebar placement
-- Reads requester email from ticket context via `client.data.get("requester")`
-- Queries Freshsales via a Vercel serverless API (replaces FDK serverless)
-- Filters results to specific record types only (Recipient, Admin User, Login Admin)
-- Deduplicates matches by mailbox ID
-- Agent selects from dropdown; app displays full contact details
-- Match/No Match badge in header
+- Shows a compact **Match / No Match** badge in the ticket sidebar
+- If matched, shows a mailbox selector dropdown (by name + POB #) and a quick summary (Mailbox ID + 1583 Status)
+- **"View Full Details"** button opens a full-size modal with all customer and mail center info
+- Modal has a **Close** button to dismiss it
 
 ## Architecture
 
-The Freshdesk app (FDK) calls a **Vercel API** (`api/lookup.js`) which handles the Freshsales lookup server-side. Freshsales credentials live in Vercel environment variables — never exposed to the frontend.
+The Freshdesk FDK app makes a direct `fetch` call to a **Vercel serverless API** which handles all Freshsales communication. Credentials never touch the frontend.
 
 ```
-Freshdesk sidebar (app.js)
+Freshdesk sidebar (app.js / modal.js)
   → fetch → Vercel API (api/lookup.js)
-    → Freshsales CRM API (/crm/sales/api/lookup)
+    → Freshsales: /crm/sales/api/lookup        (find contact by email)
+    → Freshsales: /crm/sales/api/contacts/{id} (get full contact + custom fields)
+    → Freshsales: /crm/sales/api/sales_accounts/{id} (get full account data)
 ```
+
+> **Why Vercel?** FDK's built-in server method invocation (SMI) is unreliable on platform 2.x/3.x. Vercel gives a stable, independently deployable backend.
 
 ## Project structure
 
 ```
-app/               Freshdesk sidebar app (HTML/CSS/JS)
-api/lookup.js      Vercel serverless function
-config/            FDK iparams and request templates
-server/server.js   FDK serverless stub (unused, kept for FDK validation)
-manifest.json      FDK app manifest
-vercel.json        Vercel config
+app/
+  index.html          Sidebar UI (compact summary + "View Full Details" button)
+  modal.html          Full details modal
+  scripts/app.js      Sidebar logic
+  scripts/modal.js    Modal logic (does its own Freshsales lookup)
+  styles/style.css    Shared styles
+api/
+  lookup.js           Vercel serverless function — queries Freshsales
+config/
+  requests.json       FDK request template (declared but not used at runtime)
+manifest.json         FDK app manifest (platform 3.0)
+vercel.json           Vercel routing config
 ```
 
-## Vercel environment variables
+## Fields displayed
 
-| Variable | Description |
+### Customer Info
+| Label | Freshsales field | Source |
+|---|---|---|
+| Mailbox ID | `cf_mailbox_id` | `contact.custom_field` |
+| POB # | `cf_mailbox_number` | `contact.custom_field` |
+| Plan | `cf_mailbox_plan` | `contact.custom_field` |
+| Plan Start | `cf_plan_start_date` | `contact.custom_field` |
+| 1583 Status | `cf_1583_doc_status` | `contact.custom_field` (color coded) |
+
+### Mail Center (from linked sales account)
+| Label | Freshsales field |
 |---|---|
-| `FRESHSALES_DOMAIN` | Freshsales domain e.g. `ipostal1-org.myfreshworks.com` |
-| `FRESHSALES_API_KEY` | Freshsales API token |
+| Name | `sales_account.name` |
+| Phone | `sales_account.phone` |
+| Address | `address + city + state + zipcode` |
 
-## Freshsales API
+**1583 Status color coding:** green = Approved, yellow = Pending, red = No Docs
 
-- **Endpoint:** `GET /crm/sales/api/lookup?q={email}&f=email&entities=contact&include=sales_accounts`
-- **Response structure:** `body.contacts.contacts[]` (double-nested)
-- **Record type filtering:** Results are filtered to allowed `record_type_id` values (stored as strings)
-
-### Allowed record type IDs
+### Record type filtering
+Only these `record_type_id` values are shown:
 
 | Type | ID |
 |---|---|
@@ -54,37 +69,48 @@ vercel.json        Vercel config
 | Admin User | `18011960334` |
 | Login Admin | `18011270036` |
 
-## Freshsales custom fields expected on contacts
+## Vercel environment variables
 
-| Field | Description |
+Set these in the Vercel dashboard under Project → Settings → Environment Variables:
+
+| Variable | Example value |
 |---|---|
-| `cf_mailbox_id` | Unique mailbox identifier |
-| `cf_mailbox_number` | Mailbox number |
-| `cf_mailbox_plan` | Plan name |
-| `cf_plan_start_date` | Plan start date |
-| `cf_plan_expiry_date` | Plan expiry date |
-| `cf_mailbox_account_status` | Mailbox account status |
-
-Linked sales accounts should have:
-- `cf_mc_features` — Mail center features (semicolon-delimited)
-- `address`, `city`, `state`, `zipcode` — Mail center address
-- `phone` — Mail center phone
+| `FRESHSALES_DOMAIN` | `ipostal1-org.myfreshworks.com` |
+| `FRESHSALES_API_KEY` | your Freshsales API token |
 
 ## Run locally
 
-Requires Node 18. Use fnm to switch:
 ```
-fnm use 18
 fdk run
 ```
-Then open a Freshdesk ticket and append `?dev=true` to the URL.
 
-## Known issues / notes
+Then open a Freshdesk ticket and append `?dev=true` to the URL to load the local app.
 
-- `client.interface.trigger("resize")` to expand sidebar height does not work in the `dev=true` test environment — expected to work once properly installed
-- FDK `client.request.invoke` (SMI) does not work reliably on platform 2.x; Vercel API is the workaround
-- The `vercelLookup` request template in `requests.json` shows a "not associated with product" warning — harmless, not used at runtime
-- Multiple contact records can share the same email across different record types; filtering by `record_type_id` handles this
+> **Note:** Node version check in FDK has been bypassed (patched in `node_modules/fdk/lib/cli/index.js`) to allow Node 24. If you reinstall FDK you'll need to re-apply the patch or use Node 18.
+
+## Deploy to Vercel
+
+```
+vercel --prod --scope bram-corregans-projects
+```
+
+## Pack for Freshdesk upload
+
+```
+fdk pack --skip-coverage --skip-lint
+```
+
+Upload `dist/Freshdesk Admin Express.zip` via Freshdesk Admin → Apps → Custom Apps.
+
+## Known gotchas
+
+- **`custom_field` not `custom_fields`** — Freshsales returns contact custom fields under `custom_field` (singular). Using the wrong key returns an empty object.
+- **`/lookup` returns partial data** — The Freshsales lookup endpoint doesn't return full contact or account data. The API makes follow-up calls to `/contacts/{id}` and `/sales_accounts/{id}` to get complete records.
+- **Modal close** — Use `client.instance.close()` inside the modal to close it. `client.interface.trigger("closeModal")` does NOT work.
+- **Modal data passing** — The `data` attribute in `showModal` is not supported. The modal does its own independent lookup.
+- **Sidebar height cap** — Freshdesk enforces a ~300px max height on ticket sidebar apps. The modal is the workaround for displaying full details.
+- **`vercelLookup` template warning** — FDK warns the request template isn't associated with a module. This is harmless — it's not used at runtime.
+- **`fdk config set global_apps.enabled true`** — Required once for platform 3.0 support.
 
 ---
 
@@ -92,17 +118,28 @@ Then open a Freshdesk ticket and append `?dev=true` to the URL.
 
 ### 2026-05-15
 - Scaffolded initial FDK app
-- Fixed `iparams.json` format (object format with `display_name`)
-- Fixed requester email source: `client.data.get("requester")` not `ticket`
-- Fixed `exports = {}` format for FDK serverless (platform 2.x requirement)
-- Disabled global apps in FDK config
+- Fixed iparams.json format and requester email source
 
 ### 2026-05-19
-- Diagnosed FDK SMI (server method invocation) as unreliable on platform 2.x
-- Switched to Vercel serverless API architecture
-- Discovered correct Freshsales lookup endpoint: `/crm/sales/api/lookup?q=&f=email&entities=contact`
-- Fixed nested response parsing: `body.contacts.contacts[]`
-- Added record type filtering (Recipient / Admin User / Login Admin only)
-- Added Match/No Match badge to header
-- Compacted UI for better fit in narrow sidebar
-- Attempted sidebar height resize via `client.interface.trigger` — not functional in dev mode
+- Diagnosed FDK SMI as unreliable, switched to Vercel serverless architecture
+- Discovered correct Freshsales lookup endpoint and nested response structure
+- Added record type filtering and Match/No Match badge
+- Compacted UI for sidebar
+
+### 2026-05-21
+- Wired up correct Freshsales custom field names
+- Fixed Status field name (`cf_1583_doc_status`)
+- Added Mail Center Name from linked sales account
+- Cleaned up displayed fields
+
+### 2026-05-27
+- Fixed `custom_field` (singular) key — was reading `custom_fields` (plural), causing all custom fields to return empty
+- Fixed account data (phone/address/name) — `/lookup` returns partial accounts; now fetches full account via `/sales_accounts/{id}`
+- Fixed contact data — now fetches full contact via `/contacts/{id}?include=sales_accounts`
+- Fixed Freshsales contact URL (was `uszoom.myfreshworks.com`, now `ipostal1-org.myfreshworks.com`)
+- Added POB # field (`cf_mailbox_number`) to mailbox selector and modal
+- Stripped timestamp from Plan Start Date display
+- Renamed "Status" to "1583 Status", added color-coded badge
+- Upgraded manifest to platform 3.0 (`modules.support_ticket` replaces `product.freshdesk`)
+- Added modal flow: sidebar shows compact summary, "View Full Details" opens full modal
+- Modal close works via `client.instance.close()`

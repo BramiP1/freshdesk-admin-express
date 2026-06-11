@@ -1,7 +1,7 @@
 {
-  "platform-version": "2.3",
-  "product": {
-    "freshdesk": {
+  "platform-version": "3.0",
+  "modules": {
+    "support_ticket": {
       "location": {
         "ticket_sidebar": {
           "url": "index.html",
@@ -11,7 +11,7 @@
     }
   },
   "engines": {
-    "node": "18.20.4",
+    "node": "24.15.0",
     "fdk": "9.8.2"
   }
 }
