@@ -36,9 +36,8 @@ module.exports = async function handler(req, res) {
     let body = {};
     try { body = await response.json(); } catch (e) { body = {}; }
 
-    const allowedRecordTypes = new Set(["18011960006", "18011960334", "18011270036"]);
     const allContacts = Array.isArray(body.contacts && body.contacts.contacts) ? body.contacts.contacts : [];
-    const contacts = allContacts.filter(c => allowedRecordTypes.has(String(c.record_type_id)));
+    const contacts = allContacts.filter(c => String(c.record_type_id) === "18011960006");
 
     if (contacts.length === 0) {
       return res.json({ status: "ok", matches: [] });
