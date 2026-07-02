@@ -8,9 +8,9 @@ const el = {
   stateEmpty: document.getElementById("stateEmpty"),
   stateResults: document.getElementById("stateResults"),
   matchSelect: document.getElementById("matchSelect"),
-  summaryMailboxId: document.getElementById("summaryMailboxId"),
-  summaryStatus: document.getElementById("summaryStatus"),
+  statusBadge: document.getElementById("statusBadge"),
   summaryOpenTickets: document.getElementById("summaryOpenTickets"),
+  summaryPendingTickets: document.getElementById("summaryPendingTickets"),
   summaryLifetimeTickets: document.getElementById("summaryLifetimeTickets"),
   viewDetailsBtn: document.getElementById("viewDetailsBtn")
 };
@@ -35,12 +35,16 @@ function getStatusClass(status) {
   return "";
 }
 
+function isOverOne(value) {
+  const n = parseInt(value, 10);
+  return !isNaN(n) && n > 1;
+}
+
 function renderSummary(record) {
-  el.summaryMailboxId.textContent = record.mailboxId || "N/A";
   const statusText = record.status || "N/A";
-  el.summaryStatus.textContent = statusText;
+  el.statusBadge.textContent = statusText;
   const sc = getStatusClass(statusText);
-  el.summaryStatus.className = "info-value" + (sc ? " " + sc : "");
+  el.statusBadge.className = "info-value" + (sc ? " " + sc : "");
 
   const acctStatus = record.accountStatus || "";
   if (acctStatus) {
@@ -70,10 +74,10 @@ async function fetchTicketCounts(email) {
   try {
     const res = await fetch(`https://freshdesk-admin-express.vercel.app/api/tickets?email=${encodeURIComponent(email)}`);
     const data = await res.json();
-    if (data.status !== "ok") return { open: "N/A", lifetime: "N/A" };
-    return { open: String(data.open), lifetime: String(data.lifetime) };
+    if (data.status !== "ok") return { open: "N/A", pending: "N/A", lifetime: "N/A" };
+    return { open: String(data.open), pending: String(data.pending), lifetime: String(data.lifetime) };
   } catch (e) {
-    return { open: "N/A", lifetime: "N/A" };
+    return { open: "N/A", pending: "N/A", lifetime: "N/A" };
   }
 }
 
@@ -90,7 +94,11 @@ async function run() {
   setState("loading");
   el.matchBadge.textContent = "...";
   el.matchBadge.className = "match-badge";
+  el.statusBadge.textContent = "";
+  el.statusBadge.className = "info-value";
   el.summaryOpenTickets.textContent = "—";
+  el.summaryOpenTickets.className = "info-value";
+  el.summaryPendingTickets.textContent = "—";
   el.summaryLifetimeTickets.textContent = "—";
 
   try {
@@ -111,6 +119,8 @@ async function run() {
     ]);
     matches = freshsalesMatches;
     el.summaryOpenTickets.textContent = ticketCounts.open;
+    el.summaryOpenTickets.className = "info-value" + (isOverOne(ticketCounts.open) ? " ticket-alert" : "");
+    el.summaryPendingTickets.textContent = ticketCounts.pending;
     el.summaryLifetimeTickets.textContent = ticketCounts.lifetime;
 
     if (matches.length === 0) {

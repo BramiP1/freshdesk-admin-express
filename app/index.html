@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-eval' https://static.freshdev.io; style-src 'self'; connect-src https://freshdesk-admin-express.vercel.app; img-src 'self' data:; frame-ancestors https://*.freshdesk.com;" />
     <title>Freshsales Match</title>
     <link rel="stylesheet" href="styles/style.css" />
     <script defer src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
@@ -12,6 +13,7 @@
     <main class="panel">
       <header class="panel-header">
         <span id="matchBadge" class="match-badge">...</span>
+        <span id="statusBadge" class="info-value"></span>
       </header>
 
       <section id="stateLoading" class="state">Loading...</section>
@@ -24,16 +26,12 @@
 
         <table class="info-table summary-table">
           <tr>
-            <td class="info-label">Mailbox ID</td>
-            <td class="info-value" id="summaryMailboxId"></td>
-          </tr>
-          <tr>
-            <td class="info-label">1583 Status</td>
-            <td class="info-value" id="summaryStatus"></td>
-          </tr>
-          <tr>
             <td class="info-label">Open Tickets</td>
             <td class="info-value" id="summaryOpenTickets">—</td>
+          </tr>
+          <tr>
+            <td class="info-label">Pending Tickets</td>
+            <td class="info-value" id="summaryPendingTickets">—</td>
           </tr>
           <tr>
             <td class="info-label">Lifetime Tickets</td>

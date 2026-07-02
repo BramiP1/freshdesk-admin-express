@@ -6,15 +6,21 @@ loading: document.getElementById("modalLoading"),
   matchSelect: document.getElementById("modalMatchSelect"),
   name: document.getElementById("modalName"),
   email: document.getElementById("modalEmail"),
+  businessNameRow: document.getElementById("modalBusinessNameRow"),
+  businessName: document.getElementById("modalBusinessName"),
   mailboxId: document.getElementById("modalMailboxId"),
   mailboxNumber: document.getElementById("modalMailboxNumber"),
   plan: document.getElementById("modalPlan"),
   planStartDate: document.getElementById("modalPlanStartDate"),
+  planExpiryDate: document.getElementById("modalPlanExpiryDate"),
   status: document.getElementById("modalStatus"),
   mcName: document.getElementById("modalMcName"),
+  mcStatus: document.getElementById("modalMcStatus"),
   mcPhone: document.getElementById("modalMcPhone"),
+  mcEmail: document.getElementById("modalMcEmail"),
   mcAddress: document.getElementById("modalMcAddress"),
   openTickets: document.getElementById("modalOpenTickets"),
+  pendingTickets: document.getElementById("modalPendingTickets"),
   lifetimeTickets: document.getElementById("modalLifetimeTickets"),
   link: document.getElementById("modalLink")
 };
@@ -25,10 +31,10 @@ async function fetchTicketCounts(email) {
   try {
     const res = await fetch(`https://freshdesk-admin-express.vercel.app/api/tickets?email=${encodeURIComponent(email)}`);
     const data = await res.json();
-    if (data.status !== "ok") return { open: "N/A", lifetime: "N/A" };
-    return { open: String(data.open), lifetime: String(data.lifetime) };
+    if (data.status !== "ok") return { open: "N/A", pending: "N/A", lifetime: "N/A" };
+    return { open: String(data.open), pending: String(data.pending), lifetime: String(data.lifetime) };
   } catch (e) {
-    return { open: "N/A", lifetime: "N/A" };
+    return { open: "N/A", pending: "N/A", lifetime: "N/A" };
   }
 }
 
@@ -40,13 +46,42 @@ function getStatusClass(status) {
   return "";
 }
 
+function getMcStatusClass(status) {
+  const s = (status || "").toLowerCase();
+  if (s.includes("online")) return "status-approved";
+  if (s.includes("transfer")) return "status-pending";
+  if (s.includes("offline")) return "status-nodocs";
+  return "";
+}
+
+function isOverOne(value) {
+  const n = parseInt(value, 10);
+  return !isNaN(n) && n > 1;
+}
+
+function safeHref(url) {
+  try {
+    const u = new URL(url || "");
+    return u.protocol === "https:" ? url : "#";
+  } catch (e) { return "#"; }
+}
+
 function renderMatch(match) {
   el.name.textContent = match.name || "Unnamed contact";
   el.email.textContent = match.email || "";
+
+  if (match.businessName) {
+    el.businessName.textContent = match.businessName;
+    el.businessNameRow.classList.remove("hidden");
+  } else {
+    el.businessNameRow.classList.add("hidden");
+  }
+
   el.mailboxId.textContent = match.mailboxId || "N/A";
   el.mailboxNumber.textContent = match.mailboxNumber || "N/A";
   el.plan.textContent = match.plan || "N/A";
   el.planStartDate.textContent = match.planStartDate || "N/A";
+  el.planExpiryDate.textContent = match.planExpiryDate || "N/A";
 
   const statusText = match.status || "N/A";
   el.status.textContent = statusText;
@@ -54,9 +89,15 @@ function renderMatch(match) {
   el.status.className = "info-value" + (sc ? " " + sc : "");
 
   el.mcName.textContent = match.mcName || "N/A";
+  const mcStatusText = match.mcStatus || "N/A";
+  el.mcStatus.textContent = mcStatusText;
+  const mcsc = getMcStatusClass(mcStatusText);
+  el.mcStatus.className = "info-value" + (mcsc ? " " + mcsc : "");
+
   el.mcPhone.textContent = match.storePhone || "N/A";
+  el.mcEmail.textContent = match.storeEmail || "N/A";
   el.mcAddress.textContent = match.storeAddress || "N/A";
-  el.link.href = match.adminLink || match.url || "#";
+  el.link.href = safeHref(match.adminLink || match.url);
 }
 
 function renderMatches() {
@@ -80,6 +121,9 @@ async function boot() {
   try {
     const client = await app.initialized();
     el.closeBtn.addEventListener("click", () => client.instance.close());
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") client.instance.close();
+    });
 
     const requesterData = await client.data.get("requester");
     const email = (requesterData?.requester?.email || "").trim().toLowerCase();
@@ -97,6 +141,8 @@ async function boot() {
 
     matches = freshRes.matches;
     el.openTickets.textContent = ticketCounts.open;
+    el.openTickets.className = "info-value" + (isOverOne(ticketCounts.open) ? " ticket-alert" : "");
+    el.pendingTickets.textContent = ticketCounts.pending;
     el.lifetimeTickets.textContent = ticketCounts.lifetime;
     renderMatches();
   } catch (err) {

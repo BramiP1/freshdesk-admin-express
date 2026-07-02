@@ -43,6 +43,12 @@ html::-webkit-scrollbar {
   font-size: 15px;
 }
 
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .match-badge {
   font-size: 14px;
   font-weight: 700;
@@ -184,6 +190,11 @@ label {
   display: inline-block;
 }
 
+.ticket-alert {
+  color: #b42318;
+  font-weight: 700;
+}
+
 .back-btn {
   background: none;
   border: none;
@@ -252,6 +263,15 @@ label {
 
 .modal-body {
   padding: 16px 20px;
+}
+
+.modal-match-select {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 5px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 13px;
 }
 
 .modal-name {

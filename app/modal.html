@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-eval' https://static.freshdev.io; style-src 'self'; connect-src https://freshdesk-admin-express.vercel.app; img-src 'self' data:; frame-ancestors https://*.freshdesk.com;" />
     <title>Customer Details</title>
     <link rel="stylesheet" href="styles/style.css" />
     <script defer src="https://static.freshdev.io/fdk/2.0/assets/fresh_client.js"></script>
@@ -15,12 +16,16 @@
       <div id="modalError" class="state hidden" role="alert"></div>
 
       <div id="modalContent" class="hidden">
-        <select id="modalMatchSelect" class="hidden" style="width:100%;margin-bottom:12px;padding:5px 6px;border-radius:6px;border:1px solid var(--border);font-size:13px;"></select>
+        <select id="modalMatchSelect" class="hidden modal-match-select"></select>
         <h2 id="modalName" class="modal-name"></h2>
         <p id="modalEmail" class="modal-email"></p>
 
         <div class="modal-section-label">CUSTOMER INFO</div>
         <table class="info-table">
+          <tr id="modalBusinessNameRow">
+            <td class="info-label">Company Name</td>
+            <td class="info-value" id="modalBusinessName"></td>
+          </tr>
           <tr>
             <td class="info-label">Mailbox ID</td>
             <td class="info-value" id="modalMailboxId"></td>
@@ -38,6 +43,10 @@
             <td class="info-value" id="modalPlanStartDate"></td>
           </tr>
           <tr>
+            <td class="info-label">Expiry Date</td>
+            <td class="info-value" id="modalPlanExpiryDate"></td>
+          </tr>
+          <tr>
             <td class="info-label">1583 Status</td>
             <td class="info-value" id="modalStatus"></td>
           </tr>
@@ -50,8 +59,16 @@
             <td class="info-value" id="modalMcName"></td>
           </tr>
           <tr>
+            <td class="info-label">Status</td>
+            <td class="info-value" id="modalMcStatus"></td>
+          </tr>
+          <tr>
             <td class="info-label">Phone</td>
             <td class="info-value" id="modalMcPhone"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Email</td>
+            <td class="info-value" id="modalMcEmail"></td>
           </tr>
           <tr>
             <td class="info-label">Address</td>
@@ -64,6 +81,10 @@
           <tr>
             <td class="info-label">Open Tickets</td>
             <td class="info-value" id="modalOpenTickets"></td>
+          </tr>
+          <tr>
+            <td class="info-label">Pending Tickets</td>
+            <td class="info-value" id="modalPendingTickets"></td>
           </tr>
           <tr>
             <td class="info-label">Lifetime Tickets</td>

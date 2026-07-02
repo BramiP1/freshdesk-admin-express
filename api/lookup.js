@@ -1,5 +1,16 @@
 module.exports = async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  const allowedOrigin = process.env.ALLOWED_ORIGIN;
+  const requestOrigin = req.headers.origin || "";
+
+  if (allowedOrigin) {
+    if (requestOrigin !== allowedOrigin) {
+      return res.status(403).json({ status: "error", message: "Forbidden" });
+    }
+    res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
+
   res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
@@ -15,6 +26,11 @@ module.exports = async function handler(req, res) {
 
   if (!email) {
     return res.status(400).json({ status: "error", message: "Email is required" });
+  }
+
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRe.test(email)) {
+    return res.status(400).json({ status: "error", message: "Invalid email format" });
   }
 
   const domain = process.env.FRESHSALES_DOMAIN;
@@ -111,11 +127,15 @@ function normalizeContact(contact, accountMap) {
     mailboxNumber: cf.cf_mailbox_number || "",
     plan: cf.cf_mailbox_plan || "",
     planStartDate: (cf.cf_plan_start_date || "").split("T")[0],
+    planExpiryDate: (cf.cf_plan_expiry_date || "").split("T")[0],
+    businessName: cf.cf_business_name || "",
     status: cf.cf_1583_doc_status || "",
     accountStatus: cf.cf_mailbox_account_status || "",
     mcName: (account && account.name) || "",
+    mcStatus: (account && account.custom_field && account.custom_field.cf_21_store_status) || "",
     storeAddress,
     storePhone: (account && account.phone) || "",
+    storeEmail: (account && account.custom_field && account.custom_field.cf_pms_email) || "",
     url: id ? `https://ipostal1-org.myfreshworks.com/crm/sales/contacts/${id}` : "",
     adminLink: cf.cf_link_to_customer_in_admin || ""
   };
