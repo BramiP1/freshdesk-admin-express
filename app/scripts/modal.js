@@ -65,9 +65,9 @@ function getMcStatusClass(status) {
   return "";
 }
 
-function isOverZero(value) {
+function isOverOne(value) {
   const n = parseInt(value, 10);
-  return !isNaN(n) && n > 0;
+  return !isNaN(n) && n > 1;
 }
 
 function safeHref(url) {
@@ -160,7 +160,7 @@ async function boot() {
 
     matches = freshRes.matches;
     el.openTickets.textContent = ticketCounts.open;
-    const openAlert = isOverZero(ticketCounts.open);
+    const openAlert = isOverOne(ticketCounts.open);
     el.openTickets.className = "info-value" + (openAlert ? " ticket-alert" : "");
     el.openTicketsLabel.className = "info-label" + (openAlert ? " ticket-alert" : "");
     el.lifetimeTickets.textContent = ticketCounts.lifetime;

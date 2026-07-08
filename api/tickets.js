@@ -43,7 +43,7 @@ module.exports = async function handler(req, res) {
       return res.json({ status: "ok", open: 0, lifetime: 0 });
     }
 
-    const openStatuses = new Set([2, 3, 6, 7, 8, 9, 10, 11, 12]);
+    const openStatuses = new Set([2, 3, 6, 7, 8, 10, 11, 12]);
     const open = tickets.filter(t => openStatuses.has(t.status)).length;
 
     return res.json({ status: "ok", open, lifetime: tickets.length });

@@ -37,9 +37,9 @@ function getStatusClass(status) {
   return "";
 }
 
-function isOverZero(value) {
+function isOverOne(value) {
   const n = parseInt(value, 10);
-  return !isNaN(n) && n > 0;
+  return !isNaN(n) && n > 1;
 }
 
 function renderSummary(record) {
@@ -126,7 +126,7 @@ async function run() {
     ]);
     matches = freshsalesMatches;
     el.summaryOpenTickets.textContent = ticketCounts.open;
-    const openAlert = isOverZero(ticketCounts.open);
+    const openAlert = isOverOne(ticketCounts.open);
     el.summaryOpenTickets.className = "info-value" + (openAlert ? " ticket-alert" : "");
     el.summaryOpenTicketsLabel.className = "info-label" + (openAlert ? " ticket-alert" : "");
 
