@@ -8,10 +8,10 @@ const el = {
   stateEmpty: document.getElementById("stateEmpty"),
   stateResults: document.getElementById("stateResults"),
   matchSelect: document.getElementById("matchSelect"),
+  matchSelectLabel: document.getElementById("matchSelectLabel"),
   statusBadge: document.getElementById("statusBadge"),
   summaryOpenTickets: document.getElementById("summaryOpenTickets"),
   summaryPendingTickets: document.getElementById("summaryPendingTickets"),
-  summaryLifetimeTickets: document.getElementById("summaryLifetimeTickets"),
   viewDetailsBtn: document.getElementById("viewDetailsBtn")
 };
 
@@ -58,12 +58,13 @@ function renderSummary(record) {
 }
 
 function renderMatches() {
+  el.matchSelectLabel.textContent = matches[0]?.name || "Unnamed contact";
   el.matchSelect.innerHTML = "";
   el.matchSelect.onchange = null;
   matches.forEach((record, index) => {
     const option = document.createElement("option");
     option.value = String(index);
-    option.textContent = `${record.name || "Unnamed"} - POB: ${record.mailboxNumber || "N/A"}`;
+    option.textContent = `POB: ${record.mailboxNumber || "N/A"}`;
     el.matchSelect.appendChild(option);
   });
   el.matchSelect.onchange = (e) => renderSummary(matches[Number(e.target.value)]);
@@ -99,7 +100,6 @@ async function run() {
   el.summaryOpenTickets.textContent = "—";
   el.summaryOpenTickets.className = "info-value";
   el.summaryPendingTickets.textContent = "—";
-  el.summaryLifetimeTickets.textContent = "—";
 
   try {
     const requesterData = await client.data.get("requester");
@@ -121,7 +121,6 @@ async function run() {
     el.summaryOpenTickets.textContent = ticketCounts.open;
     el.summaryOpenTickets.className = "info-value" + (isOverOne(ticketCounts.open) ? " ticket-alert" : "");
     el.summaryPendingTickets.textContent = ticketCounts.pending;
-    el.summaryLifetimeTickets.textContent = ticketCounts.lifetime;
 
     if (matches.length === 0) {
       el.matchBadge.textContent = "No Match";

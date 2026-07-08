@@ -14,7 +14,9 @@ loading: document.getElementById("modalLoading"),
   planStartDate: document.getElementById("modalPlanStartDate"),
   planExpiryDate: document.getElementById("modalPlanExpiryDate"),
   status: document.getElementById("modalStatus"),
+  accountStatus: document.getElementById("modalAccountStatus"),
   mcName: document.getElementById("modalMcName"),
+  mcStoreType: document.getElementById("modalMcStoreType"),
   mcStatus: document.getElementById("modalMcStatus"),
   mcPhone: document.getElementById("modalMcPhone"),
   mcEmail: document.getElementById("modalMcEmail"),
@@ -43,6 +45,14 @@ function getStatusClass(status) {
   if (s.includes("approved")) return "status-approved";
   if (s.includes("pending")) return "status-pending";
   if (s.includes("no doc")) return "status-nodocs";
+  return "";
+}
+
+function getAccountStatusClass(status) {
+  const s = (status || "").toLowerCase();
+  if (s.includes("inactive")) return "status-nodocs";
+  if (s.includes("expired")) return "status-pending";
+  if (s.includes("active")) return "status-approved";
   return "";
 }
 
@@ -88,7 +98,13 @@ function renderMatch(match) {
   const sc = getStatusClass(statusText);
   el.status.className = "info-value" + (sc ? " " + sc : "");
 
+  const acctStatusText = match.accountStatus || "N/A";
+  el.accountStatus.textContent = acctStatusText;
+  const asc = getAccountStatusClass(acctStatusText);
+  el.accountStatus.className = "info-value" + (asc ? " " + asc : "");
+
   el.mcName.textContent = match.mcName || "N/A";
+  el.mcStoreType.textContent = match.storeType || "N/A";
   const mcStatusText = match.mcStatus || "N/A";
   el.mcStatus.textContent = mcStatusText;
   const mcsc = getMcStatusClass(mcStatusText);

@@ -43,8 +43,9 @@ module.exports = async function handler(req, res) {
       return res.json({ status: "ok", open: 0, pending: 0, lifetime: 0 });
     }
 
+    const pendingStatuses = new Set([3, 6, 7, 8, 9, 10, 11, 12]);
     const open = tickets.filter(t => t.status === 2).length;
-    const pending = tickets.filter(t => t.status === 3).length;
+    const pending = tickets.filter(t => pendingStatuses.has(t.status)).length;
 
     return res.json({ status: "ok", open, pending, lifetime: tickets.length });
   } catch (error) {

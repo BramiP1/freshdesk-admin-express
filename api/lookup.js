@@ -133,6 +133,7 @@ function normalizeContact(contact, accountMap) {
     accountStatus: cf.cf_mailbox_account_status || "",
     mcName: (account && account.name) || "",
     mcStatus: (account && account.custom_field && account.custom_field.cf_21_store_status) || "",
+    storeType: (account && account.custom_field && account.custom_field.cf_store_type_new) || "",
     storeAddress,
     storePhone: (account && account.phone) || "",
     storeEmail: (account && account.custom_field && account.custom_field.cf_pms_email) || "",

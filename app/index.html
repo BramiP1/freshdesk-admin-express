@@ -21,7 +21,7 @@
       <section id="stateEmpty" class="state hidden">No Freshsales matches found for this requester.</section>
 
       <section id="stateResults" class="hidden">
-        <label for="matchSelect">Select a mailbox</label>
+        <label for="matchSelect" id="matchSelectLabel"></label>
         <select id="matchSelect"></select>
 
         <table class="info-table summary-table">
@@ -32,10 +32,6 @@
           <tr>
             <td class="info-label">Pending Tickets</td>
             <td class="info-value" id="summaryPendingTickets">—</td>
-          </tr>
-          <tr>
-            <td class="info-label">Lifetime Tickets</td>
-            <td class="info-value" id="summaryLifetimeTickets">—</td>
           </tr>
         </table>
 
