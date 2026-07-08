@@ -40,14 +40,13 @@ module.exports = async function handler(req, res) {
     const tickets = await ticketsRes.json();
 
     if (!Array.isArray(tickets)) {
-      return res.json({ status: "ok", open: 0, pending: 0, lifetime: 0 });
+      return res.json({ status: "ok", open: 0, lifetime: 0 });
     }
 
-    const pendingStatuses = new Set([3, 6, 7, 8, 9, 10, 11, 12]);
-    const open = tickets.filter(t => t.status === 2).length;
-    const pending = tickets.filter(t => pendingStatuses.has(t.status)).length;
+    const openStatuses = new Set([2, 3, 6, 7, 8, 9, 10, 11, 12]);
+    const open = tickets.filter(t => openStatuses.has(t.status)).length;
 
-    return res.json({ status: "ok", open, pending, lifetime: tickets.length });
+    return res.json({ status: "ok", open, lifetime: tickets.length });
   } catch (error) {
     console.error("Freshdesk tickets lookup failed:", error.message);
     return res.status(500).json({ status: "error", message: "Freshdesk lookup failed" });

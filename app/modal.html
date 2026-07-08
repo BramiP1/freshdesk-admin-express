@@ -16,6 +16,7 @@
       <div id="modalError" class="state hidden" role="alert"></div>
 
       <div id="modalContent" class="hidden">
+        <label for="modalMatchSelect" id="modalMatchSelectLabel" class="hidden"></label>
         <select id="modalMatchSelect" class="hidden modal-match-select"></select>
         <h2 id="modalName" class="modal-name"></h2>
         <p id="modalEmail" class="modal-email"></p>
@@ -87,12 +88,8 @@
         <div class="modal-section-label">FRESHDESK</div>
         <table class="info-table">
           <tr>
-            <td class="info-label">Open Tickets</td>
+            <td class="info-label" id="modalOpenTicketsLabel">Open Tickets</td>
             <td class="info-value" id="modalOpenTickets"></td>
-          </tr>
-          <tr>
-            <td class="info-label">Pending Tickets</td>
-            <td class="info-value" id="modalPendingTickets"></td>
           </tr>
           <tr>
             <td class="info-label">Lifetime Tickets</td>

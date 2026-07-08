@@ -10,8 +10,10 @@ const el = {
   matchSelect: document.getElementById("matchSelect"),
   matchSelectLabel: document.getElementById("matchSelectLabel"),
   statusBadge: document.getElementById("statusBadge"),
+  summaryMcName: document.getElementById("summaryMcName"),
+  summaryMcEmail: document.getElementById("summaryMcEmail"),
+  summaryOpenTicketsLabel: document.getElementById("summaryOpenTicketsLabel"),
   summaryOpenTickets: document.getElementById("summaryOpenTickets"),
-  summaryPendingTickets: document.getElementById("summaryPendingTickets"),
   viewDetailsBtn: document.getElementById("viewDetailsBtn")
 };
 
@@ -35,12 +37,15 @@ function getStatusClass(status) {
   return "";
 }
 
-function isOverOne(value) {
+function isOverZero(value) {
   const n = parseInt(value, 10);
-  return !isNaN(n) && n > 1;
+  return !isNaN(n) && n > 0;
 }
 
 function renderSummary(record) {
+  el.summaryMcName.textContent = record.mcName || "N/A";
+  el.summaryMcEmail.textContent = record.storeEmail || "N/A";
+
   const statusText = record.status || "N/A";
   el.statusBadge.textContent = statusText;
   const sc = getStatusClass(statusText);
@@ -75,10 +80,10 @@ async function fetchTicketCounts(email) {
   try {
     const res = await fetch(`https://freshdesk-admin-express.vercel.app/api/tickets?email=${encodeURIComponent(email)}`);
     const data = await res.json();
-    if (data.status !== "ok") return { open: "N/A", pending: "N/A", lifetime: "N/A" };
-    return { open: String(data.open), pending: String(data.pending), lifetime: String(data.lifetime) };
+    if (data.status !== "ok") return { open: "N/A", lifetime: "N/A" };
+    return { open: String(data.open), lifetime: String(data.lifetime) };
   } catch (e) {
-    return { open: "N/A", pending: "N/A", lifetime: "N/A" };
+    return { open: "N/A", lifetime: "N/A" };
   }
 }
 
@@ -97,9 +102,11 @@ async function run() {
   el.matchBadge.className = "match-badge";
   el.statusBadge.textContent = "";
   el.statusBadge.className = "info-value";
+  el.summaryMcName.textContent = "";
+  el.summaryMcEmail.textContent = "";
   el.summaryOpenTickets.textContent = "—";
   el.summaryOpenTickets.className = "info-value";
-  el.summaryPendingTickets.textContent = "—";
+  el.summaryOpenTicketsLabel.className = "info-label";
 
   try {
     const requesterData = await client.data.get("requester");
@@ -119,8 +126,9 @@ async function run() {
     ]);
     matches = freshsalesMatches;
     el.summaryOpenTickets.textContent = ticketCounts.open;
-    el.summaryOpenTickets.className = "info-value" + (isOverOne(ticketCounts.open) ? " ticket-alert" : "");
-    el.summaryPendingTickets.textContent = ticketCounts.pending;
+    const openAlert = isOverZero(ticketCounts.open);
+    el.summaryOpenTickets.className = "info-value" + (openAlert ? " ticket-alert" : "");
+    el.summaryOpenTicketsLabel.className = "info-label" + (openAlert ? " ticket-alert" : "");
 
     if (matches.length === 0) {
       el.matchBadge.textContent = "No Match";

@@ -4,6 +4,7 @@ loading: document.getElementById("modalLoading"),
   error: document.getElementById("modalError"),
   content: document.getElementById("modalContent"),
   matchSelect: document.getElementById("modalMatchSelect"),
+  matchSelectLabel: document.getElementById("modalMatchSelectLabel"),
   name: document.getElementById("modalName"),
   email: document.getElementById("modalEmail"),
   businessNameRow: document.getElementById("modalBusinessNameRow"),
@@ -21,8 +22,8 @@ loading: document.getElementById("modalLoading"),
   mcPhone: document.getElementById("modalMcPhone"),
   mcEmail: document.getElementById("modalMcEmail"),
   mcAddress: document.getElementById("modalMcAddress"),
+  openTicketsLabel: document.getElementById("modalOpenTicketsLabel"),
   openTickets: document.getElementById("modalOpenTickets"),
-  pendingTickets: document.getElementById("modalPendingTickets"),
   lifetimeTickets: document.getElementById("modalLifetimeTickets"),
   link: document.getElementById("modalLink")
 };
@@ -33,10 +34,10 @@ async function fetchTicketCounts(email) {
   try {
     const res = await fetch(`https://freshdesk-admin-express.vercel.app/api/tickets?email=${encodeURIComponent(email)}`);
     const data = await res.json();
-    if (data.status !== "ok") return { open: "N/A", pending: "N/A", lifetime: "N/A" };
-    return { open: String(data.open), pending: String(data.pending), lifetime: String(data.lifetime) };
+    if (data.status !== "ok") return { open: "N/A", lifetime: "N/A" };
+    return { open: String(data.open), lifetime: String(data.lifetime) };
   } catch (e) {
-    return { open: "N/A", pending: "N/A", lifetime: "N/A" };
+    return { open: "N/A", lifetime: "N/A" };
   }
 }
 
@@ -64,9 +65,9 @@ function getMcStatusClass(status) {
   return "";
 }
 
-function isOverOne(value) {
+function isOverZero(value) {
   const n = parseInt(value, 10);
-  return !isNaN(n) && n > 1;
+  return !isNaN(n) && n > 0;
 }
 
 function safeHref(url) {
@@ -118,11 +119,13 @@ function renderMatch(match) {
 
 function renderMatches() {
   if (matches.length > 1) {
+    el.matchSelectLabel.textContent = matches[0]?.name || "Unnamed contact";
+    el.matchSelectLabel.classList.remove("hidden");
     el.matchSelect.innerHTML = "";
     matches.forEach((m, i) => {
       const opt = document.createElement("option");
       opt.value = String(i);
-      opt.textContent = `${m.name || "Unnamed"} - POB: ${m.mailboxNumber || "N/A"}`;
+      opt.textContent = `POB: ${m.mailboxNumber || "N/A"}`;
       el.matchSelect.appendChild(opt);
     });
     el.matchSelect.classList.remove("hidden");
@@ -157,8 +160,9 @@ async function boot() {
 
     matches = freshRes.matches;
     el.openTickets.textContent = ticketCounts.open;
-    el.openTickets.className = "info-value" + (isOverOne(ticketCounts.open) ? " ticket-alert" : "");
-    el.pendingTickets.textContent = ticketCounts.pending;
+    const openAlert = isOverZero(ticketCounts.open);
+    el.openTickets.className = "info-value" + (openAlert ? " ticket-alert" : "");
+    el.openTicketsLabel.className = "info-label" + (openAlert ? " ticket-alert" : "");
     el.lifetimeTickets.textContent = ticketCounts.lifetime;
     renderMatches();
   } catch (err) {

@@ -89,3 +89,56 @@ Investigate pulling email history from Freshsales into the app.
 Investigate pulling email history from Freshsales into the app.
 - Freshsales API endpoint to research: `GET /crm/sales/api/contacts/{id}/emails` or similar
 - Goal: display recent email correspondence with the contact inside the modal
+
+---
+
+# Checkpoint - 2026-07-08
+
+## What we did today
+
+### UI Changes
+- Added **Account Status** row to the modal's Customer Info section (`cf_mailbox_account_status`), color coded: Active=green, Inactive=red, Expired=yellow
+- Added **Store Type** row to the modal's Mail Center section, below Name (`cf_store_type_new`, sales_accounts[0].custom_field)
+- Sidebar's mailbox dropdown label now shows the customer's name instead of static "Select a mailbox" text; dropdown options simplified to just `POB: <number>` (name removed since it's now shown as the label)
+- Removed **Lifetime Tickets** row from the sidebar view — still shown in the modal, still fetched under the hood (used for the modal), just not rendered in the sidebar
+- **Pending Tickets** now counts multiple Freshdesk statuses instead of just status `3` — added custom statuses `6, 7, 8, 9, 10, 11, 12` (client's Freshdesk instance uses several custom "waiting on X" statuses beyond the default four)
+
+### Investigated, not resolved
+- **Business Name** (`cf_business_name`) still shows blank/hidden in testing — the code path is confirmed correct (reads `contact.custom_field.cf_business_name`, hides the row cleanly when empty). Likely cause: the test contact doesn't actually have a value in that field in Freshsales, not a code bug. Needs a contact with real data to confirm, or verification of the exact internal field key via Freshsales admin.
+
+### Process Notes
+- Local FDK server (`fdk run` via `?dev=true`) stays running across sessions on port 10001 — reused instead of restarting for each round of changes
+- Repacked and reuploaded the app after front-end changes: `fdk pack --skip-coverage` outputs `dist/Freshdesk Admin Express.zip`. Remember — **API changes** (`api/lookup.js`, `api/tickets.js`) deploy via `git push` to Vercel; **front-end changes** (`app/*`) require a fresh `fdk pack` + manual reupload to Freshdesk. They are separate deploy paths and both are needed when a change touches both sides.
+- `fdk pack`/`fdk run` prompt interactively about CLI version updates on every invocation — pipe `echo n |` in front of the command to avoid it hanging non-interactive sessions
+
+### Current Field Mapping (api/lookup.js)
+| Display | Freshsales Field | Source |
+|---|---|---|
+| Company Name | `cf_business_name` | contact.custom_field |
+| Mailbox ID | `cf_mailbox_id` | contact.custom_field |
+| POB # | `cf_mailbox_number` | contact.custom_field |
+| Plan | `cf_mailbox_plan` | contact.custom_field |
+| Plan Start | `cf_plan_start_date` | contact.custom_field |
+| Expiry Date | `cf_plan_expiry_date` | contact.custom_field |
+| 1583 Status | `cf_1583_doc_status` | contact.custom_field |
+| Account Status | `cf_mailbox_account_status` | contact.custom_field |
+| Recipient Lookup URL | `cf_link_to_customer_in_admin` | contact.custom_field |
+| MC Name | `name` | sales_accounts[0] |
+| MC Store Type | `cf_store_type_new` | sales_accounts[0].custom_field |
+| MC Status | `cf_21_store_status` | sales_accounts[0].custom_field |
+| MC Email | `cf_pms_email` | sales_accounts[0].custom_field |
+| Phone | `phone` | sales_accounts[0] |
+| Address | `address + city + state + zipcode` | sales_accounts[0] |
+
+### Pending Ticket Status IDs (api/tickets.js)
+| ID | Meaning |
+|---|---|
+| 2 | Open (counted separately) |
+| 3 | Pending (default) |
+| 6-12 | Custom "waiting on X" statuses, all counted as Pending |
+
+## Next Step
+- Confirm the correct internal field key / test data for Business Name (`cf_business_name`)
+- Investigate pulling email history from Freshsales into the app.
+  - Freshsales API endpoint to research: `GET /crm/sales/api/contacts/{id}/emails` or similar
+  - Goal: display recent email correspondence with the contact inside the modal
